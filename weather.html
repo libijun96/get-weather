@@ -122,6 +122,9 @@
 				function get_weather(city){
 					$.ajax({
 						type:"get",
+						/*浏览器默认是不允许在 https里面引用 http资源的，会被直接block掉，
+						可以使用相对协议实现当网站引入的都是 http资源，
+						就是将URL的协议（http、https）去掉，只保留//及后面的内容*/
 						url:"//api.map.baidu.com/telematics/v3/weather?location="+city+"&output=json&ak=yu7quaGHvS1rHiT3mQanzOqMEH0lIgCN",
 						async:true,
 						dataType:"JSONP",
