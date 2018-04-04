@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+		<title>weather</title>
+		<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	</head>
+	<body>
+		<div class="container py-3">
+			<label>选择城市：</label>
+			<select id="city" class="form-control" style="display:inline-block;width:auto;">
+				<option value="北京">北京</option>
+				<option value="长沙">长沙</option>
+				<option value="广州">广州</option>
+				<option value="佛山">佛山</option>
+				<option value="上海">上海</option>
+				<option value="昆明">昆明</option>
+				<option value="拉萨">拉萨</option>
+				<option value="衡山">衡山</option>
+			</select>
+			<h5 class="my-5">生活指数</h5>
+			<div class="table-responsive">
+				<table class="table table-bordered table-striped text-center">
+					<thead>
+						<tr>
+						    <th scope="col">指数</th>
+						    <th scope="col">描述</th>
+					   </tr>
+					</thead>
+					<tbody id="life-index">
+						<tr>
+							<th>穿衣指数</th>
+							<td>获取中...</td>
+						</tr>
+						<tr>
+							<th>洗衣指数</th>
+							<td>获取中...</td>
+						</tr>
+						<tr>
+							<th>感冒指数</th>
+							<td>获取中...</td>
+						</tr>
+						<tr>
+							<th>运动指数</th>
+							<td>获取中...</td>
+						</tr>
+						<tr>
+							<th>紫外线强度指数</th>
+							<td>获取中...</td>
+						</tr>
+						<tr>
+							<th>pm25指数</th>
+							<td>获取中...</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<h5 class="my-5">未来3天天气预报</h5>
+			<div class="table-responsive">
+				<table class="table table-bordered table-striped text-center">
+					<thead>
+						<tr>
+						    <th scope="col">日期</th>
+						    <th scope="col">星期</th>
+						    <th scope="col">白天</th>
+						    <th scope="col">晚上</th>
+						    <th scope="col">气温</th>
+						    <th scope="col">天气</th>
+						    <th scope="col">风力风向</th>
+					  </tr>
+					</thead>
+					<tbody id="for-weather">
+						<tr>
+							<td>获取中....</td>
+							<td>获取中....</td>
+							<td>获取中....</td>
+							<td>获取中....</td>
+							<td>获取中....</td>
+							<td>获取中....</td>
+							<td>获取中....</td>
+						</tr>
+						<tr>
+							<td></td>
+							<td>获取中....</td>
+							<td>获取中....</td>
+							<td>获取中....</td>
+							<td>获取中....</td>
+							<td>获取中....</td>
+							<td>获取中....</td>
+						</tr>
+						<tr>
+							<td></td>
+							<td>获取中....</td>
+							<td>获取中....</td>
+							<td>获取中....</td>
+							<td>获取中....</td>
+							<td>获取中....</td>
+							<td>获取中....</td>
+						</tr>
+						<tr>
+							<td></td>
+							<td>获取中....</td>
+							<td>获取中....</td>
+							<td>获取中....</td>
+							<td>获取中....</td>
+							<td>获取中....</td>
+							<td>获取中....</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		
+		<!--bootstrap瘦身版的jq不支持ajax，因此要引入完整版-->
+		<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+		<script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+		<script type="text/javascript">
+			$(function(){
+//				获取天气信息
+				function get_weather(city){
+					$.ajax({
+						type:"get",
+						url:"http://api.map.baidu.com/telematics/v3/weather?location="+city+"&output=json&ak=yu7quaGHvS1rHiT3mQanzOqMEH0lIgCN",
+						async:true,
+						dataType:"JSONP",
+						success:function(result,status,xhr){
+	//						tbody部分
+							var life_t=document.getElementById("life-index");
+							var weather_t=document.getElementById("for-weather");
+							
+	//						获取的结果
+							var rel=result.results[0];
+	//						生活指数
+							var life_index=rel.index;
+	//						生活建议
+							for(var i=0;i<life_index.length;i++){
+								life_t.rows[i].cells[1].innerHTML=life_index[i].des;
+							}
+	//						PM2.5指数
+							life_t.rows[life_index.length].cells[1].innerHTML=rel.pm25;
+							
+	//						天气预报
+							var weather=rel.weather_data;
+							weather_t.rows[0].cells[0].innerHTML=weather[0].date.slice(3,9);
+							for(var i=0;i<weather.length;i++){
+								weather_t.rows[i].cells[1].innerHTML=weather[i].date.slice(0,3);
+								weather_t.rows[i].cells[2].innerHTML="<img src='"+weather[i].dayPictureUrl+"'/>";
+								weather_t.rows[i].cells[3].innerHTML="<img src='"+weather[i].nightPictureUrl+"'/>";
+								weather_t.rows[i].cells[4].innerHTML=weather[i].temperature;
+								weather_t.rows[i].cells[5].innerHTML=weather[i].weather;
+								weather_t.rows[i].cells[6].innerHTML=weather[i].wind;
+							}
+						},
+						error:function(xhr,status,error){
+							alert(status+" : "+xhr.status+" ("+error+")");
+						}
+					});
+				}
+				get_weather("北京");
+				
+//				改变选项
+				var city=document.getElementById("city");
+				city.onchange=function(){
+					get_weather(city.value);
+				}
+			});
+		</script>
+	</body>
+</html>
